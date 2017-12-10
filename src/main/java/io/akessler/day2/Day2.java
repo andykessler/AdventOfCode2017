@@ -47,6 +47,21 @@ public class Day2 {
     }
 
     public static int maxEvenDivisibile(String[] vals) {
-        return -1;
+        int maxDivis = Integer.MIN_VALUE;
+        // we will use duplicate comparisons to switch divisor
+        for(String n : vals) {
+            for(String d : vals) {
+                if(n.equals(d)) continue;
+                int num = Integer.parseInt(n); // numerator
+                int div = Integer.parseInt(d); // denominator
+                if(num % div == 0) {
+                    int quotient =  num / div;
+                    if(quotient > maxDivis) {
+                        maxDivis = quotient;
+                    }
+                }
+            }
+        }
+        return  maxDivis;
     }
 }
