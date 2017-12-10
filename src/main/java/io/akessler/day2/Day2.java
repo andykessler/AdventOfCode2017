@@ -48,12 +48,16 @@ public class Day2 {
 
     public static int maxEvenDivisibile(String[] vals) {
         int maxDivis = Integer.MIN_VALUE;
-        // we will use duplicate comparisons to switch divisor
-        for(String n : vals) {
-            for(String d : vals) {
-                if(n.equals(d)) continue;
-                int num = Integer.parseInt(n); // numerator
-                int div = Integer.parseInt(d); // denominator
+        for(int i=0; i<vals.length; i++){
+            // j=i+1 to prevent self and repeated comparisons
+            for(int j=i+1; j<vals.length; j++){
+                int num = Integer.parseInt(vals[i]); // numerator
+                int div = Integer.parseInt(vals[j]); // denominator
+                if(div > num) {  // make sure dividing by smaller
+                    int temp = div;
+                    div = num;
+                    num = temp;
+                }
                 if(num % div == 0) {
                     int quotient =  num / div;
                     if(quotient > maxDivis) {
