@@ -55,6 +55,7 @@ public class Day4 {
             boolean foundAnagram = false;
             for(int i=0; i<words.length; i++) {
                 for(int j=i+1; j<words.length; j++){
+                    // can check length as heuristic, compare letter counts if equal
                     boolean foundDiff = false;
                     for(int k=0; k<26; k++) {
                         if(map.get(words[i])[k] != map.get(words[j])[k]){
@@ -74,7 +75,6 @@ public class Day4 {
             if(!foundAnagram) {
                 validCount++;
             }
-
         }
         return validCount;
     }
