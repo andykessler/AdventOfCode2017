@@ -1,112 +1,78 @@
 package io.akessler.day6;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import io.akessler.AdventUtility;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class Day6 {
 
-    private static final String FILE_NAME = "src/main/res/day6/input.txt";
-
     public static void main(String[] args) {
-        String line;
-        try {
-            FileReader fileReader = new FileReader(FILE_NAME);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            while((line = bufferedReader.readLine()) != null){
-                String[] words = line.split("\t");
-                int[] vals = new int[words.length];
-                for(int i=0; i<words.length; i++){
-                    vals[i] = Integer.parseInt(words[i]);
-                    System.out.println(vals[i]);
+        String line = AdventUtility.readInput(6).get(0);
 
-                }
-
-                Set<String> history = new HashSet<>();
-                do {
-                    history.add(valsToString(vals));
-                    int max = Integer.MIN_VALUE;
-                    int maxi = -1;
-                    for (int i = 0; i < vals.length; i++) {
-                        int v = vals[i];
-                        if (v > max) {
-                            max = v;
-                            maxi = i;
-                        }
-                    }
-                    vals[maxi] = 0;
-                    int i = maxi + 1;
-                    int left = max;
-                    while (left > 0) {
-                        if (i >= vals.length) {
-                            i = 0;
-                        }
-                        vals[i] += 1;
-                        i++;
-                        left--;
-                    }
-                } while(!history.contains(valsToString(vals)));
-
-                int cycles = history.size();
-                int cycleLength = cycles - part2(valsToString(vals), line);
-
-                System.out.println(history.size());
-                System.out.println(cycleLength);
-            }
-            bufferedReader.close();
+        String[] words = line.split("\t");
+        int[] initValues = new int[words.length];
+        for (int i = 0; i < words.length; i++) {
+            initValues[i] = Integer.parseInt(words[i]);
         }
-        catch(Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+        int[] values1 = initValues.clone();
+        int[] values2 = initValues.clone();
+
+        int cycles = part1(values1);
+        int cycleLength = cycles - part2(values2, valuesToString(values1));
+
+        System.out.println(cycles);
+        System.out.println(cycleLength);
+
+    }
+
+    private static int part1(int[] vals) {
+        Set<String> history = new HashSet<>();
+        do {
+            history.add(valuesToString(vals));
+            distributeHighestResource(vals);
+        } while(!history.contains(valuesToString(vals)));
+        return history.size();
+    }
+
+    private static int part2(int[] vals, String cycleStart) {
+        Set<String> history = new HashSet<>();
+        do {
+            history.add(valuesToString(vals));
+            distributeHighestResource(vals);
+
+        } while(!cycleStart.equals(valuesToString(vals)));
+        return history.size();
+    }
+
+    private static void distributeHighestResource(int[] vals) {
+        int max = Integer.MIN_VALUE;
+        int maxi = -1;
+        for (int i = 0; i < vals.length; i++) {
+            int v = vals[i];
+            if (v > max) {
+                max = v;
+                maxi = i;
+            }
+        }
+        vals[maxi] = 0;
+        int i = maxi + 1;
+        int left = max;
+        while (left > 0) {
+            if (i >= vals.length) {
+                i = 0;
+            }
+            vals[i] += 1;
+            i++;
+            left--;
         }
     }
 
-    private static String valsToString(int[] vals) {
+    private static String valuesToString(int[] vals) {
         StringBuilder builder = new StringBuilder();
         for(int v : vals) {
             builder.append(v).append('\t');
         }
-        String result =  builder.toString();
-        System.out.println(result);
-        return result;
+        return builder.toString();
     }
-
-    private static int part2(String cycleStart, String line) {
-        // duplicating code xD
-        String[] words = line.split("\t");
-        int[] vals = new int[words.length];
-        for(int i=0; i<words.length; i++){
-            vals[i] = Integer.parseInt(words[i]);
-            System.out.println(vals[i]);
-
-        }
-
-        Set<String> history = new HashSet<>();
-        do {
-            history.add(valsToString(vals));
-            int max = Integer.MIN_VALUE;
-            int maxi = -1;
-            for (int i = 0; i < vals.length; i++) {
-                int v = vals[i];
-                if (v > max) {
-                    max = v;
-                    maxi = i;
-                }
-            }
-            vals[maxi] = 0;
-            int i = maxi + 1;
-            int left = max;
-            while (left > 0) {
-                if (i >= vals.length) {
-                    i = 0;
-                }
-                vals[i] += 1;
-                i++;
-                left--;
-            }
-        } while(!cycleStart.equals(valsToString(vals)));
-        return history.size();
-    }
-
 }

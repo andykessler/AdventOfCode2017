@@ -1,29 +1,22 @@
 package io.akessler.day2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import io.akessler.AdventUtility;
+
+import java.util.List;
 
 public class Day2 {
 
-    private static final String FILE_NAME = "src/main/res/day2/input.txt";
-
     public static void main(String[] args) {
-        String line = null;
+
+        List<String> lines = AdventUtility.readInput(2);
+
         int sum1 = 0;
         int sum2 = 0;
-        try {
-            FileReader fileReader = new FileReader(FILE_NAME);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            while((line = bufferedReader.readLine()) != null){
-                String[] vals = line.split("\t");
-                sum1 += maxDiff(vals);
-                sum2 += maxEvenDivisibile(vals);
-            }
-            bufferedReader.close();
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+
+        for(String line : lines) {
+            String[] vals = line.split("\t");
+            sum1 += maxDiff(vals);
+            sum2 += maxEvenDivisibile(vals);
         }
 
         System.out.println(sum1);
@@ -42,7 +35,7 @@ public class Day2 {
                 max = val;
             }
         }
-        // Assumes vals is at least length 1
+        // assumes vals is at least length 1
         return max - min;
     }
 

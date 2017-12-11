@@ -1,27 +1,18 @@
 package io.akessler.day1;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import io.akessler.AdventUtility;
 
 public class Day1 {
 
-    private static final String FILE_NAME = "src/main/res/day1/input.txt";
-
     public static void main(String[] args) {
-        String line = null;
-        try {
-            FileReader fileReader = new FileReader(FILE_NAME);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            line = bufferedReader.readLine(); // only reading the first line here
-            bufferedReader.close();
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
 
-        System.out.println(String.format("Puzzle 1 : %d", puzzle1(line)));
-        System.out.println(String.format("Puzzle 2 : %d", puzzle2(line)));
+        String line = AdventUtility.readInput(1).get(0);
+
+        int answer1 = puzzle1(line);
+        int answer2 = puzzle2(line);
+
+        System.out.println(String.format("Puzzle 1 : %d", answer1));
+        System.out.println(String.format("Puzzle 2 : %d", answer2));
     }
 
     public static int puzzle1(String input) {
