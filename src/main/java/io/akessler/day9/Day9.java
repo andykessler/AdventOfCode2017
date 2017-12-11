@@ -31,53 +31,34 @@ public class Day9 {
         boolean inGarbage = false;
         for(int i=0; i<chars.length; i++) {
             char c = chars[i];
-            if(skipNext) {
+
+            if (skipNext) {
                 skipNext = false;
                 continue;
             }
+            else if (c == IGNORE_NEXT) {
+                skipNext = true;
+                continue;
+            }
 
-            // FIXME Is there a way to pull up `inGarbage` check without redundant checks in switch?
-            switch(c) {
-                case IGNORE_NEXT:
-                    skipNext = true;
-                    break;
-
-                case GROUP_BEGIN:
-                    if(inGarbage) {
-                        totalGarbage++;
-                        break;
-                    }
-                    openGroupStack.push(openGroupStack.peek() + 1);
-                    break;
-
-                case GROUP_END:
-                    if(inGarbage) {
-                        totalGarbage++;
-                        break;
-                    }
-                    groupSum += openGroupStack.pop();
-                    break;
-
-                case GARBAGE_BEGIN:
-                    if(!inGarbage) {
-                        inGarbage = true;
-                    }
-                    else {
-                        totalGarbage++;
-                    }
-                    break;
-
-                case GARBAGE_END:
-                    if(inGarbage) inGarbage = false;
-                    break;
-
-                case ENTRY_DELIM:
-                    if(inGarbage) totalGarbage++;
-                    break;
-
-                default:
+            if (inGarbage) {
+                if (c == GARBAGE_END) {
+                    inGarbage = false;
+                }
+                else {
                     totalGarbage++;
-                    break;
+                }
+            }
+            else {
+                if (c == GARBAGE_BEGIN) {
+                    inGarbage = true;
+                }
+                else if (c == GROUP_BEGIN) {
+                    openGroupStack.push(openGroupStack.peek() + 1);
+                }
+                else if (c == GROUP_END) {
+                    groupSum += openGroupStack.pop();
+                }
             }
         }
 
