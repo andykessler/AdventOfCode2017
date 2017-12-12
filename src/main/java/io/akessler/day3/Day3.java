@@ -2,10 +2,15 @@ package io.akessler.day3;
 
 import io.akessler.AdventUtility;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
 
 public class Day3 {
+
+    private static final int START_VALUE = 1;
+
+    private static final int GRID_WIDTH = 51;
+
+    private static final int GRID_HEIGHT = 51;
 
     public static void main(String[] args) {
         int inputValue = Integer.parseInt(AdventUtility.readInput(3).get(0));
@@ -13,8 +18,8 @@ public class Day3 {
         int answer1 = manhattanDistance(inputValue);
         int answer2 = firstValueLargerThan(inputValue);
 
-        System.out.println(answer1);
-        System.out.println(answer2);
+        System.out.println("Part 1: " + answer1);
+        System.out.println("Part 2: " + answer2);
     }
 
     private static int manhattanDistance(int inputValue) {
@@ -46,78 +51,55 @@ public class Day3 {
         return dist;
     }
 
-    /* Example:
-    147  142  133  122   59
-    304    5    4    2   57
-    330   10    1    1   54
-    351   11   23   25   26
-    362  747  806--->   ...
-     */
-    // Considering just creating struct that has pointers to each direction...
-    // Or a list of lists for each layer, to easily do math through previous layers...
     private static int firstValueLargerThan(int inputValue) {
-        List<Integer> sequence = new ArrayList<>();
-        // hardcoding the first few values of sequence to avoid handling special cases
-        sequence.add(1);  sequence.add(1);  sequence.add(2);
-        sequence.add(4);  sequence.add(5);  sequence.add(10);
-        sequence.add(11); sequence.add(23); sequence.add(25);
-
-        int curr = 25;
-
-        int x = 3;
-        int minRange = (int) Math.pow(x,2) + 1;
-        int maxRange = (int) Math.pow(x+2,2);
-        int diff = (maxRange - minRange) + 1;
-        int sideLength = diff / 4;
-        int sideEnd = minRange + sideLength;
-
-        int lastMinRange = 0, lastMaxRange = 0, lastSideLength = 1;
-
-        int i = sequence.size();
-        int side = 1;
-        while(curr < inputValue) {
-            int sum = curr; // always include last value in sum
-            if(i == minRange) { // this is 1 away from a corner
-                // add 1 other value to sum (1st one of the last layer)
-                int index = lastMinRange - 1;
-                sum += sequence.get(index);
+        int x = GRID_WIDTH, y = GRID_HEIGHT;
+        // center of 2d array, so can access with negative indices
+        Point off = new Point((x / 2), (y / 2));
+        int[][] dirs = {{0,1},{-1,0},{0,-1},{1,0}};
+        int[][] grid = new int[x][y];
+        for(int i=0; i<x; i++){
+            for(int j=0; j<y; j++) {
+                grid[i][j] = 0; // initialize grid to 0 (not needed?)
             }
-            else if(i == sideEnd - 1) { // this is 1 away from a corner
-                // add 2 other values to sum (last layer's same corner + that one's prev)
-                int index = lastMinRange + (sideLength * side) - 1;
-                sum += sequence.get(index);
-                sum += sequence.get(index - 1);
-            }
-            else if(i == sideEnd) { // this is a corner
-                // add 1 other value to sum (last layer's same corner)
-                int index = lastMinRange + (sideLength * side) - 1;
-                sum += sequence.get(index);
+        }
+        grid[off.x][off.y] = START_VALUE;
 
-                sideEnd += sideLength;
-                side++;
-                if(sideEnd > maxRange) { // start new layer, adjust values
-                    // use these history values to interact with previous layer
-                    lastMinRange = minRange;
-                    lastMaxRange = maxRange;
-                    lastSideLength = sideLength;
 
-                    x += 2;
-                    minRange = (int) Math.pow(x,2) + 1;
-                    maxRange = (int) Math.pow(x+2,2);
-                    diff = (maxRange - minRange) + 1;
-                    sideLength = diff / 4;
-                    sideEnd = minRange + sideLength;
-                    side = 1;
+        Direction dir = Direction.UP;
+        int currValue = START_VALUE;
+        int currX = 1;
+        int currY = 0;
+        int currStep = 1;
+        int maxSteps = 2;
+
+        while(currValue <= inputValue) {
+            // lol, instead only add up those on the left+behind of current direction
+            currValue = grid[currX + off.x + 1][currY + off.y]
+                    + grid[currX + off.x - 1][currY + off.y]
+                    + grid[currX + off.x][currY + off.y + 1]
+                    + grid[currX + off.x][currY + off.y - 1]
+                    + grid[currX + off.x + 1][currY + off.y + 1]
+                    + grid[currX + off.x - 1][currY + off.y - 1]
+                    + grid[currX + off.x + 1][currY + off.y - 1]
+                    + grid[currX + off.x - 1][currY + off.y + 1];
+
+            grid[currX + off.x][currY + off.y] = currValue;
+
+            if(currStep == maxSteps) {
+                dir = dir.next();
+                currStep = 0;
+                if(dir == Direction.UP) {
+                    maxSteps += 2;
+                    currX++;
+                    currStep++;
+                    continue;
                 }
             }
-            else { // this is all other cases
-                // add 3 other values to sum
-                // TODO
-            }
-            curr = sum;
-            sequence.add(curr);
-            i++;
+
+            currX += dir.x;
+            currY += dir.y;
+            currStep++;
         }
-        return curr;
+        return currValue;
     }
 }
