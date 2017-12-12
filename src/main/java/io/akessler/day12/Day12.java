@@ -14,9 +14,12 @@ public class Day12 {
 
     private static final int SEARCH_ID = 0;
 
+    private static Map<Integer, Node> idNodeMap;
+
     public static void main(String[] args) {
         List<String> lines = AdventUtility.readInput(12);
-        Map<Integer, Node> idNodeMap = new HashMap<>();
+
+        idNodeMap = new HashMap<>();
         for (String line : lines) {
             String[] words = line.split(" ");
             int id = Integer.parseInt(words[0]);
@@ -32,13 +35,29 @@ public class Day12 {
             idNodeMap.put(id, n);
         }
 
-        Node rootNode = idNodeMap.get(SEARCH_ID);
+        // start with search id for part 1
+        // then after just get arbitrary node to traverse for part 2
+        int answer1 = calculateGraphCardinality(idNodeMap.get(SEARCH_ID));
+
+        System.out.println(String.format("Size containing id %d: %d",SEARCH_ID, answer1));
+
+        int totalGroups = 1; // start at 1 since did graph with SEARCH_ID
+        while(!idNodeMap.isEmpty()) {
+            Node n = (Node) idNodeMap.values().toArray()[0];
+            calculateGraphCardinality(n);
+            totalGroups++;
+        }
+
+        System.out.println("Total Groups: " + totalGroups);
+    }
+
+    private static int calculateGraphCardinality(Node root) {
 
         Stack<Node> nodeStack = new Stack<>();
         Set<Node> visited = new HashSet<>();
 
-        nodeStack.push(rootNode);
-        visited.add(rootNode);
+        nodeStack.push(root);
+        visited.add(root);
 
         while (!nodeStack.isEmpty()) {
             Node n = nodeStack.pop();
@@ -51,6 +70,8 @@ public class Day12 {
             }
         }
 
-        System.out.println(visited.size());
+        idNodeMap.values().removeAll(visited);
+
+        return visited.size();
     }
 }
