@@ -2,19 +2,27 @@ package io.akessler.day3;
 
 import io.akessler.AdventUtility;
 
+import java.awt.*;
+
 public class Day3 {
+
+    private static final int START_VALUE = 1;
+
+    private static final int GRID_WIDTH = 51;
+
+    private static final int GRID_HEIGHT = 51;
 
     public static void main(String[] args) {
         int inputValue = Integer.parseInt(AdventUtility.readInput(3).get(0));
 
-        int answer1 = manhattenDistance(inputValue);
+        int answer1 = manhattanDistance(inputValue);
         int answer2 = firstValueLargerThan(inputValue);
 
-        System.out.println(answer1);
-        System.out.println(answer2);
+        System.out.println("Part 1: " + answer1);
+        System.out.println("Part 2: " + answer2);
     }
 
-    private static int manhattenDistance(int inputValue) {
+    private static int manhattanDistance(int inputValue) {
         int x=1;
         while(Math.pow(x,2)<=inputValue) {
             x+=2;
@@ -44,6 +52,54 @@ public class Day3 {
     }
 
     private static int firstValueLargerThan(int inputValue) {
-        return -1;
+        int x = GRID_WIDTH, y = GRID_HEIGHT;
+        // center of 2d array, so can access with negative indices
+        Point off = new Point((x / 2), (y / 2));
+        int[][] dirs = {{0,1},{-1,0},{0,-1},{1,0}};
+        int[][] grid = new int[x][y];
+        for(int i=0; i<x; i++){
+            for(int j=0; j<y; j++) {
+                grid[i][j] = 0; // initialize grid to 0 (not needed?)
+            }
+        }
+        grid[off.x][off.y] = START_VALUE;
+
+
+        Direction dir = Direction.UP;
+        int currValue = START_VALUE;
+        int currX = 1;
+        int currY = 0;
+        int currStep = 1;
+        int maxSteps = 2;
+
+        while(currValue <= inputValue) {
+            // lol, instead only add up those on the left+behind of current direction
+            currValue = grid[currX + off.x + 1][currY + off.y]
+                    + grid[currX + off.x - 1][currY + off.y]
+                    + grid[currX + off.x][currY + off.y + 1]
+                    + grid[currX + off.x][currY + off.y - 1]
+                    + grid[currX + off.x + 1][currY + off.y + 1]
+                    + grid[currX + off.x - 1][currY + off.y - 1]
+                    + grid[currX + off.x + 1][currY + off.y - 1]
+                    + grid[currX + off.x - 1][currY + off.y + 1];
+
+            grid[currX + off.x][currY + off.y] = currValue;
+
+            if(currStep == maxSteps) {
+                dir = dir.next();
+                currStep = 0;
+                if(dir == Direction.UP) {
+                    maxSteps += 2;
+                    currX++;
+                    currStep++;
+                    continue;
+                }
+            }
+
+            currX += dir.x;
+            currY += dir.y;
+            currStep++;
+        }
+        return currValue;
     }
 }
