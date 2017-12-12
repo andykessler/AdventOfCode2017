@@ -8,8 +8,11 @@ import java.util.List;
 public class AdventUtility {
 
     private static final int MIN_DAY = 1;
+
     private static final int MAX_DAY = 25;
+
     private static final String FILE_PATH_TEMPLATE = "src/main/res/day%d/input.txt";
+//    private static final String FILE_PATH_TEMPLATE = "src/main/res/day%d/example.txt";
 
     public static List<String> readInput(int day) {
         if(day < MIN_DAY || day > MAX_DAY) {
