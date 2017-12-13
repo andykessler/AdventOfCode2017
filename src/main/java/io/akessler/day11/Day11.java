@@ -42,6 +42,6 @@ public class Day11 {
         int dx = east - west;
         int remY = Math.max(0, Math.abs(dy) - Math.abs(dx));
 
-        return Math.abs(dx) + remY - (remY /  2);
+        return Math.abs(dx) + (remY /  2);
     }
 }
