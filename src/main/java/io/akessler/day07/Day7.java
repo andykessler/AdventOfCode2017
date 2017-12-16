@@ -1,4 +1,4 @@
-package io.akessler.day7;
+package io.akessler.day07;
 
 import io.akessler.AdventUtility;
 

@@ -12,16 +12,19 @@ public class AdventUtility {
     private static final int MAX_DAY = 25;
 
     private static final String FILE_PATH_TEMPLATE = "src/main/res/day%d/input.txt";
-//    private static final String FILE_PATH_TEMPLATE = "src/main/res/day%d/example.txt";
+    // FIXME There is a better way to do this instead of 2 separate templates
+    private static final String FILE_PATH_TEMPLATE_LT10 = "src/main/res/day0%d/input.txt"; // for days less than 10
+    //    private static final String FILE_PATH_TEMPLATE = "src/main/res/day%d/example.txt";
 
     public static List<String> readInput(int day) {
         if(day < MIN_DAY || day > MAX_DAY) {
             return null; // error
         }
+        String template = day < 10 ? FILE_PATH_TEMPLATE_LT10 : FILE_PATH_TEMPLATE;
         List<String> lines = new ArrayList<>();
-        String line = null;
+        String line;
         try {
-            FileReader fileReader = new FileReader(String.format(FILE_PATH_TEMPLATE, day));
+            FileReader fileReader = new FileReader(String.format(template, day));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             while((line = bufferedReader.readLine()) != null) {
                 lines.add(line);
